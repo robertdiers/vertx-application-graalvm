@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>vertx</groupId>
+  <artifactId>vertx-example</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+
+  <properties>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.testSource>1.8</maven.compiler.testSource>
+    <maven.compiler.testTarget>1.8</maven.compiler.testTarget>
+
+    <vertx.version>3.8.0</vertx.version>
+    <junit-jupiter.version>5.4.0</junit-jupiter.version>
+    <graal.version>19.1.1</graal.version>
+
+    <main.verticle>vertx.ServiceLauncher</main.verticle>
+
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.vertx</groupId>
+        <artifactId>vertx-stack-depchain</artifactId>
+        <version>${vertx.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-rx-java2</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web</artifactId>
+    </dependency>
+    <dependency>
+ 	  <groupId>io.vertx</groupId>
+ 	  <artifactId>vertx-jdbc-client</artifactId>
+	</dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-junit5</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+	    <groupId>com.h2database</groupId>
+	    <artifactId>h2</artifactId>
+	    <version>1.4.199</version>
+	</dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+        <groupId>com.oracle.substratevm</groupId>
+        <artifactId>svm</artifactId>
+        <version>${graal.version}</version>
+        <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+        <plugin>
+            <groupId>io.reactiverse</groupId>
+            <artifactId>vertx-maven-plugin</artifactId>
+            <version>1.0.20</version>
+            <executions>
+                <execution>
+                    <id>vmp</id>
+                    <goals>
+                        <goal>initialize</goal>
+                        <goal>package</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <redeploy>true</redeploy>
+            </configuration>
+        </plugin>
+        <!-- create native graal image using maven plugin -->
+        <!-- sudo apt install zlib1g-dev -->
+        <plugin>
+            <groupId>com.oracle.substratevm</groupId>
+            <artifactId>native-image-maven-plugin</artifactId>
+            <version>${graal.version}</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>native-image</goal>
+                    </goals>
+                    <phase>package</phase>
+                </execution>
+            </executions>
+            <configuration>
+                <imageName>${project.name}</imageName>
+                <mainClass>${main.verticle}</mainClass>
+                <buildArgs>-H:+ReportUnsupportedElementsAtRuntime --allow-incomplete-classpath</buildArgs>
+            </configuration>
+        </plugin>
+    </plugins>
+  </build>
+
+</project>
