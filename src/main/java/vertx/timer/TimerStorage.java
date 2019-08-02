@@ -25,7 +25,7 @@ public class TimerStorage {
         Logger.log("Successfully scheduled all Timers");
     }
 
-    public static void chancelTimer(String name) {
+    public static void cancelTimer(String name) {
         Long id = storedIDs.get(name);
         if (id != null) vertx.cancelTimer(id);
     }
