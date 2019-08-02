@@ -87,13 +87,15 @@ public class TestService {
     }
 
     private String timeIntensiveStuff(String input) {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        synchronized(input) {
+            try {
+                input.wait(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
+            return  sdf.format(new Date()) + " " + input;
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss:SSS");
-        return  sdf.format(new Date()) + " " + input;
     }
 
     public void getWebclient(Vertx vertx, RoutingContext ctx){

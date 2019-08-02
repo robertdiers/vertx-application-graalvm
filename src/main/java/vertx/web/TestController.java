@@ -54,7 +54,7 @@ public class TestController extends AbstractController {
     }
 
     private void getRxjava(RoutingContext ctx){
-        //use an worker as service / JDBC access will be synchronously
+        //as RxJava is async executeBlocking is not required, but to stay secure and consistent we should do this
         vertx.executeBlocking(
                 promise -> { promise.complete(service.rxjava()); },
                 false,
@@ -63,7 +63,7 @@ public class TestController extends AbstractController {
     }
 
     private void getParallelrxjava(RoutingContext ctx){
-        //use an worker as service / JDBC access will be synchronously
+        //as RxJava is async executeBlocking is not required, but to stay secure and consistent we should do this
         vertx.executeBlocking(
                 promise -> { promise.complete(service.parallelrxjava()); },
                 false,
